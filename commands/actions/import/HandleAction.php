@@ -50,19 +50,19 @@ class HandleAction extends Action
 
         $currentCategory = null;
         foreach ($rows as $row) {
-            // TODO: Исключения
+            // TODO: Ignored
             if (in_array($row[0], ['Internet Total', 'PVR on Internet'])) {
                 continue;
             }
 
-            // Если находим Total - прокручиваем дальше при этом обнуляя категорию
+            // If we find Total - scroll further and set null the category
             if ('Total' == $row[0]) {
                 $currentCategory = null;
 
                 continue;
             }
 
-            // Если на данный момент категории нет - заполняем (либо только начали, либо один шаг назад был Total)
+            // If there is no category at the moment, fill it in (either just started, or one step back was Total)
             if (null === $currentCategory) {
                 $currentCategory = $row[0];
 
@@ -80,8 +80,6 @@ class HandleAction extends Action
         }
 
         $this->import($budgetName, $products);
-
-        dd(1);
     }
 
     /**
@@ -239,20 +237,4 @@ class HandleAction extends Action
     {
         return array_intersect_key($array, array_flip($columns));
     }
-}
-
-function dd(...$data)
-{
-    var_dump(...[...$data, get_formatted_peak_memory_usage()]);die;
-}
-
-function get_formatted_peak_memory_usage(): string
-{
-    $bytes = memory_get_peak_usage();
-    $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-    if (0 === $bytes) {
-        return '0 ' . $unit[0];
-    }
-
-    return round($bytes / pow(1000, ($i = floor(log($bytes, 1000)))), 2) . ' ' . ($unit[$i] ?? 'B');
 }
