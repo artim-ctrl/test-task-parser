@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      args:
+        user: artim
+        uid: 1000
+        working_dir: /var/www/app
+      context: docker/php
+      dockerfile: Dockerfile
+    container_name: app
+    volumes:
+      - ./:/var/www/app
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_USER: artim
+      MYSQL_PASSWORD: artim
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_NAME: mysql
+    ports:
+      - "3306:3306"
